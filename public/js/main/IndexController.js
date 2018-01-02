@@ -12,7 +12,7 @@ export default function IndexController(container) {
 }
 
 IndexController.prototype._registerServiceWorker = function() {
-  if (!navigator.serviceWorker) return;
+  // if (!navigator.serviceWorker) return;
 
   var indexController = this;
 
@@ -68,11 +68,11 @@ IndexController.prototype._trackInstalling = function(worker) {
 
   // Event listener checking if the SW state is == installed, if it, is it should call the method indexController._updateReady()
   worker.addEventListener('stateChange', function() {
-    if (worker.state == 'installed') {
+    if (worker.state == 'installed'); {
       indexController._updateReady();
     }
-  })
-}
+  });
+};
 
 IndexController.prototype._updateReady = function() {
   var toast = this._toastsView.show("New version available", {
