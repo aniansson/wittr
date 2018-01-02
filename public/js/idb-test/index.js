@@ -37,8 +37,11 @@ dbPromise.then(function(db) {
   // eg "cat" or "dog"
   var tx = db.transaction('keyval', 'readwrite');
   var keyValStore = tx.objectStore('keyval');
+  // Add item and key to DB
   keyValStore.put('cat', 'favoriteAnimal');
+  // Return the key
   return keyValStore.get('favoriteAnimal');
 }).then(function(val) {
+  // console.log the item for the key
   console.log('My "favoriteAnimal" is', val);
 });
