@@ -36,8 +36,13 @@ IndexController.prototype._registerServiceWorker = function() {
     });
   });
 
+  // 3.25
   // TODO: listen for the controlling service worker changing
   // and reload the page
+  // React to skipWaiting being called
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    window.location.reload();
+  });
 };
 
 IndexController.prototype._trackInstalling = function(worker) {
@@ -56,7 +61,11 @@ IndexController.prototype._updateReady = function(worker) {
 
   toast.answer.then(function(answer) {
     if (answer != 'refresh') return;
+    // 3.25
     // TODO: tell the service worker to skipWaiting
+    // {action: skipmessage} == object
+    // action == property, skipMessage == value
+    worker.postMessage({action: 'skipMessage'})
   });
 };
 
