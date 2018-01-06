@@ -47,8 +47,13 @@ self.addEventListener('fetch', function(event) {
       event.respondWith(servePhoto(event.request));
       return;
     }
+    // 4.13
     // TODO: respond to avatar urls by responding with
     // the return value of serveAvatar(event.request)
+    if (requestUrl.pathname.startsWith('/avatars')) {
+      event.respondWith(serveAvatar(event.request));
+      return;
+    }
   }
 
   event.respondWith(
@@ -66,11 +71,23 @@ function serveAvatar(request) {
   // This means you only store one copy of each avatar.
   var storageUrl = request.url.replace(/-\dx\.jpg$/, '');
 
+  // 4.13
   // TODO: return images from the "wittr-content-imgs" cache
   // if they're in there. But afterwards, go to the network
   // to update the entry in the cache.
   //
   // Note that this is slightly different to servePhoto!
+  return caches.open(contentImgsCache).then(function(cache) {
+    return cache.match(storageUrl).then(function(response) {
+      var networkFetch = fetch(request).then(function(networkResponse) {
+        cache.put(storageUrl, networkResponse.clone());
+        return networkResponse;
+      });
+
+      // Returns either a cache response or the network response
+      return response || networkFetch
+    });
+  });
 }
 
 function servePhoto(request) {
